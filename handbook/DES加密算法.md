@@ -5,19 +5,19 @@ DES(Data Encryption Standard)，数据加密标准，是基于56位密钥的对�
 $A \ \oplus \ B = C \Rightarrow A \ \oplus \ C = B$
 
 1. 算法解析
-    
+
     1. 骨架
 
-    ![](./static/DES/bone.png)
-    
+    ![bone](./static/DES/bone.png)
+
     每一轮加密后的结果作为下一轮的输入，在第一轮之前进行$IP$置换，最后一轮之后进行$IP^{-1}$置换。
 
     2. 密钥变换
 
-    ![](./static/DES/key.png)
-    
+    ![key](./static/DES/key.png)
+
     密钥变换如图所示。64位密钥经过压缩置换变为56位有效密钥，分成LR两个部分进行移位。每一轮密钥变换的移位位数由移位表决定。结果有两方面作用：
-        
+
         1. 经过第二次压缩置换，作为有效密钥进入本轮加密过程
         2. 返回到移位之前，作为下一轮密钥变换的输入
 
@@ -86,3 +86,46 @@ for i := 16 -> 1:
     (end of for)
 OUTPUT = IP^-1(M)      # 输出
 ```
+
+***
+后附其他与加密解密相关的置换、替换表。
+
+![](./static/DES/IP.png)
+
+![](./static/DES/IP_line.png)
+
+![](./static/DES/IP_rev.png)
+
+![](./static/DES/P.png)
+
+![](./static/DES/P_line.png)
+
+![](./static/DES/PC1.png)
+
+![](./static/DES/PC1_line.png)
+
+![](./static/DES/PC2.png)
+
+![](./static/DES/PC2_line.png)
+
+![](./static/DES/Extend.png)
+
+![](./static/DES/Extend_line.png)
+
+![](./static/DES/S1.png)
+
+![](./static/DES/S2.png)
+
+![](./static/DES/S3.png)
+
+![](./static/DES/S4.png)
+
+![](./static/DES/S5.png)
+
+![](./static/DES/S6.png)
+
+![](./static/DES/S7.png)
+
+![](./static/DES/S8.png)
+
+![](./static/DES/Shift.png)
