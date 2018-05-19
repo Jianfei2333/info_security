@@ -8,7 +8,9 @@ def _2hex(s):
 
 def _2bin(s):
     b = bin(int(s,16))[2:]
-    delta = 64 - len(b)%64
+    delta = 0
+    if (len(b)%64 != 0):
+        delta = 64 - len(b)%64
     b = "0"*delta + b
     return (b)
 
@@ -29,13 +31,11 @@ def read_str(s):
 # 随机密钥生成
 
 def keygen():
-    """
-    生成随机密钥
-    长度：64bit
-    有效位数：56
-    其中奇偶校验分别为第8*n位
-    返回字符串，可以直接输入至加密、解密算法
-    """
+    # 生成随机密钥
+    # 长度：64bit
+    # 有效位数：56
+    # 其中奇偶校验分别为第8*n位
+    # 返回字符串，可以直接输入至加密、解密算法
     flag = False
     key = ""
     for i in range(0,64):
@@ -60,37 +60,19 @@ def keygen():
         key_in_bin = "0"*delta+key_in_bin
     return {"bin": key_in_bin, "hex":_2hex(key_in_bin)}
 
-k = keygen()
-
-# 明文
-# c = bin(int('AAAAAFFFFFFFFFFF',16))[2:]
-
-# print ("明文",hex(int(c,2)))
-# p = DES.encrypt(c, k)
-# print ("密文",hex(int(p,2)))
-
-# c1 = DES.decrypt(p, k)
-# print ("明文",hex(int(c1,2)))
-
-# 将字符串编码为二进制串，返回01字符串，进入下一步处理
-# 用'100000'表示字符分隔
-
-def cut(s, num):
-    b = encode(s)
+def cut(b, num):
+    # b = encode(s)
     # 计算相差位数
-    delta = num - len(b)%num
-    # print (delta)
-    # print (b)
+    delta = 0
+    if len(b)%num != 0:
+        delta = num - len(b)%num
     # 补充差位（用0）
     b = b+("0"*delta)
-    # print (b)
     bins = []
     while(len(b) != 0):
         bins.append(b[:num])
         b = b.split(b[:num],1)[1]
     return {"data":bins, "addition_count":delta}
-
-# print (cut(read_str(), 64))
 
 def encryptor():
     # 明文：
@@ -99,38 +81,44 @@ def encryptor():
     key = keygen()
     k = key["bin"]
     print ("Your key: ", key["hex"])
-    # 编码，裁剪：
-    encrypt_package = cut(plain, 64)
+    # 编码:
+    b = encode(plain)
+    print ('encoding: ', b)
+    # 裁剪:
+    encrypt_package = cut(b, 64)
     print ("Your additional bits count: ", encrypt_package["addition_count"])
     cipher = ""
     for d in encrypt_package["data"]:
-        # print (d)
-        cipher += DES.encrypt(d, k, silence=True)
-    print (_2hex(cipher))
-    print (len(cipher))
-    new_plain = ""
+        node = DES.encrypt(d, k, silence=True)
+        cipher += node
+    print ('密文: '+_2hex(cipher))
+
+    print ('复制以下内容以解密：')
+    print (_2hex(cipher)+' '+str(encrypt_package["addition_count"])+' '+key["hex"])
 
 
 def decryptor():
-    # 密文：
-    cipher = read_str("密文")
-    # 补位：
-    addition = read_str("补充位数")
-    # 密钥：
-    k = read_str("密钥")
+    everything = read_str('密文，补充位数，密钥，用空格间隔')
+    cipher = everything.split(' ')[0]
+    addition = everything.split(' ')[1]
+    key = everything.split(' ')[2]
+    # 密文 cipher
+    # 补充位数 addition
+    # 密钥 key
+    k = _2bin(key)
     # 裁剪：
     decrypt_package = cut(_2bin(cipher), 64)
     plain = ""
     if (decrypt_package['addition_count']!=0):
-        print (decrypt_package['addition_count'])
         print ("Error: Bits check failed, maybe the cipher you've input was wrong?")
-        # return
+        return
     else:
         for d in decrypt_package["data"]:
-            plain += DES.decrypt(d, k, silence=True)
+            node = DES.decrypt(d, k, silence=True)
+            plain += node
+    plain = plain[:-int(addition)]
+    print (plain)
     print (decode(plain))
 
-
-
-encryptor()
-# decryptor()
+# encryptor()
+decryptor()
