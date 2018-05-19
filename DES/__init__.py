@@ -2,7 +2,7 @@
 # 二进制数据以01字符串形式传递 
 from . import util
 
-def encrypt (C, K):
+def encrypt (C, K, silence = False):
     M = C
     T = K
     # print (T, K)
@@ -20,12 +20,13 @@ def encrypt (C, K):
         E = util.F(Key_to_use, L_new)
         R_new = util.xor(util.left(M), E)
         M = util.join(L_new, R_new)
-        print ('roll ',i,': ',hex(int(M,2)))
+        if (silence == False):
+            print ('round ',i,': ',hex(int(M,2)))
     res = util.IP_rev(M)
     # print (res)
     return (res)
 
-def decrypt (P, K):
+def decrypt (P, K, silence):
     M = P
     T = K
     if (not util.check(P,64) or not util.check(K,64)):
@@ -39,7 +40,8 @@ def decrypt (P, K):
         E = util.F(Key_to_use, R_ori)
         L_ori = util.xor(util.right(M), E)
         M = util.join(L_ori, R_ori)
-        print ('roll ',i,': ',hex(int(M,2)))
+        if (silence == False):
+            print ('round ',i,': ',hex(int(M,2)))
     res = util.IP_rev(M)
     # print (res)
     return (util.IP_rev(M))
