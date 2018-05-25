@@ -25,9 +25,6 @@ class MyApp(QMainWindow, Ui_MainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
         msg.setText(content)
-        # msg.setInformativeText("This is additional information")
-        # msg.setWindowTitle("Warning")
-        # msg.setDetailedText("The details are as follows:")
         retval = msg.exec_()        
         
     def Encrypt_btn_clicked(self):
@@ -66,9 +63,11 @@ class MyApp(QMainWindow, Ui_MainWindow):
         elif (cipher == ''):
             self.warning('Cipher is empty !')
         elif (addition == ''):
-            self.addition('Addition is empty !')
+            self.warning('Addition is empty !')
         else:
             plain = DES_tool.decryptor(cipher, addition, key)
+            if (plain['err'] != None):
+                self.warning(plain['err'])
             self.Plain_text2.setPlainText(plain["plain"])
  
 if __name__ == "__main__":

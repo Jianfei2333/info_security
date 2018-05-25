@@ -151,5 +151,5 @@ def decryptor(cipher, addition, key):
             plain += node
     # 去尾部
     plain = plain[:-int(addition)]
-    
+
     return ({"plain": decode(plain), "err": None})
